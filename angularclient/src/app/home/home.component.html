@@ -1,0 +1,6 @@
+<div [hidden]="authenticated()">
+	<p>Please Login or Join.</p>
+</div>
+<div [hidden]="!authenticated()">
+	<p>Welcome, {{ username }}!</p>
+</div>

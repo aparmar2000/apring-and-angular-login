@@ -15,19 +15,26 @@ public class BasicAuthConfiguration extends WebSecurityConfigurerAdapter {
         auth
           .inMemoryAuthentication()
           .withUser("user")
-          .password("password")
+          .password("{noop}password")
           .roles("USER");
     }
  
     @Override
     protected void configure(HttpSecurity http) 
       throws Exception {
-        http.csrf().disable()
+        http
+          .httpBasic()
+	    .and()
           .authorizeRequests()
-          .antMatchers("/login").permitAll()
-          .anyRequest()
-          .authenticated()
-          .and()
-          .httpBasic();
+            .antMatchers("/index.html", "/", "/home", "/login", "/join", "/logout").permitAll()
+            .anyRequest().authenticated()
+        .and()
+          .cors()
+            .configurationSource(new CorsConfig())
+        .and()
+          .logout()
+        .and()
+          .csrf()
+            .ignoringAntMatchers("/logout");
     }
 }
