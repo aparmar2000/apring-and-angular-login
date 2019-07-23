@@ -19,8 +19,8 @@ public class BasicAuthConfiguration extends WebSecurityConfigurerAdapter {
     private JdbcTemplate jdbcTemplate;
 	
 	@Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(20);
+    public static PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(10);
     }
 	
 	@Override
@@ -38,6 +38,7 @@ public class BasicAuthConfiguration extends WebSecurityConfigurerAdapter {
     public JdbcUserDetailsManager userDetailsService() {
         JdbcUserDetailsManager manager = new JdbcUserDetailsManager();
         manager.setJdbcTemplate(jdbcTemplate);
+        System.out.println(manager);
         return manager;
     }
  
@@ -58,6 +59,6 @@ public class BasicAuthConfiguration extends WebSecurityConfigurerAdapter {
           .permitAll()
         .and()
           .csrf()
-            .ignoringAntMatchers("/logout");
+            .ignoringAntMatchers("/logout", "/join");
     }
 }

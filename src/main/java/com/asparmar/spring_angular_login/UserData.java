@@ -3,8 +3,13 @@ package com.asparmar.spring_angular_login;
 public class UserData {
 	private String username, password;
 	
-	//Standard Getters & Setters
+	@Override
+	public String toString() {
+		return "UserData [username=" + username + ", password=" + password + "]";
+	}
 	
+	//Standard Getters & Setters
+
 	public String getUsername() {
 		return username;
 	}

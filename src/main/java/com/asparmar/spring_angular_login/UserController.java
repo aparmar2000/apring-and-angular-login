@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 	@Autowired
 	private H2Dao dao;
+	@Autowired
+	private JdbcUserDetailsManager userManager;
      
     @RequestMapping("/user")
 	public Principal user(Principal user) {
@@ -28,12 +31,18 @@ public class UserController {
 	}
     
     @PostMapping("/join")
-    void addUser(@RequestBody UserData newUser, JdbcUserDetailsManager userManager, PasswordEncoder passEncoder) {
-    	System.out.println("Adding user:\n\t"+newUser.getUsername()+" : "+newUser.getPassword());
+    public String addUser(@RequestBody UserData newUser) {
+    	PasswordEncoder passEncoder = BasicAuthConfiguration.passwordEncoder();
+    	
+    	System.out.println("Adding user:\n\t"+newUser);
     	
     	List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
 		authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+    	String encodedPassword = passEncoder.encode(newUser.getPassword());
     	
-    	userManager.createUser(new User(newUser.getUsername(), passEncoder.encode(newUser.getPassword()), true, true, true, true, authorities));
+    	UserDetails newDetails = new User(newUser.getUsername(), encodedPassword, true, true, true, true, authorities);
+    	userManager.createUser(newDetails);
+    	
+    	return "success";
     }
 }
