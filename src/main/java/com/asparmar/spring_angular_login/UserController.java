@@ -31,8 +31,12 @@ public class UserController {
 	}
     
     @PostMapping("/join")
-    public String addUser(@RequestBody UserData newUser) {
+    public ResponseData addUser(@RequestBody UserData newUser) {
     	PasswordEncoder passEncoder = BasicAuthConfiguration.passwordEncoder();
+    	
+    	if (userManager.userExists(newUser.getUsername())) {
+    		return new ResponseData(false, "Username is taken.");
+    	}
     	
     	System.out.println("Adding user:\n\t"+newUser);
     	
@@ -43,6 +47,6 @@ public class UserController {
     	UserDetails newDetails = new User(newUser.getUsername(), encodedPassword, true, true, true, true, authorities);
     	userManager.createUser(newDetails);
     	
-    	return "success";
+    	return new ResponseData(true, "");
     }
 }

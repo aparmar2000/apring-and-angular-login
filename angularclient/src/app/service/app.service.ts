@@ -32,7 +32,7 @@ export class AppService {
 	
   public adduser(user: UserData) {
 	console.log(user);
-	return this.http.post<UserData>('http://localhost:8080/join', user);
+	return this.http.post('http://localhost:8080/join', user);
   }
 
 }
