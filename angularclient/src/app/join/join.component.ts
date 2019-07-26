@@ -14,12 +14,14 @@ export class JoinComponent {
   credentials = {username: '', password: '', passwordVerify: ''};
   joinUser: UserData
   joinError = false;
+  success = false;
   error = '';
 
   constructor(private app: AppService, private http: HttpClient, private router: Router) {
   }
 
   join() {
+	if (this.success) {return;}
 	this.error = '';
 	if (!this.verify()) {
 		this.error = "There are validation errors.  Please fix and resubmit.";
@@ -28,11 +30,13 @@ export class JoinComponent {
 	this.joinUser = new UserData(this.credentials.username, this.credentials.password);
     this.app.adduser(this.joinUser).subscribe(result => {
             if (result['success']) {
-				this.joinError = false;
-				this.router.navigateByUrl('/');
+				this.success = true;
+				setTimeout(() => {
+					this.router.navigate(['/login']);
+				}, 5000);
 			} else {
-				this.joinError = true;
-				this.error = result['error'];
+				this.success = false;
+				this.error = result['error'] + "  Please fix and resubmit.";
 				console.log(this.error);
 			}
 			
